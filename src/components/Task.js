@@ -2,17 +2,22 @@ import React, { Component } from "react";
 import Update from "./Update";
 
 class Task extends Component {
-  state = {
-    isModal: false
-  };
-
-  handleModal = modalVal => {
+  constructor (props) {
+    super(props)
+    this.state = {
+      isModal: false,
+      value: props.value || null
+    }
+  }
+  
+  handleModal = (modalVal) => {
     this.setState({
       isModal: modalVal
-    });
-  };
+    })
+  }
+
   render() {
-    const { value } = this.props;
+    const { value } = this.state;
 
     return (
       <div className="container">
@@ -28,7 +33,6 @@ class Task extends Component {
                     <button
                       onClick={e => {
                         e.preventDefault();
-
                         this.handleModal(true);
                       }}
                       className="btn btn-primary btn-color-white mr-3"

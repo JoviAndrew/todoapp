@@ -1,5 +1,10 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux'
+
 import Axios from "axios";
+
+// Redux
+import { addNewTask } from '../redux/taskActions'
 
 class Create extends Component {
   state = {
@@ -9,11 +14,11 @@ class Create extends Component {
   };
 
   insertData = () => {
-    const length = this.props.val.length;
-    let getLastId = 1;
-    if (length !== 0) {
-      getLastId = this.props.val[length - 1].taskid + 1;
-    }
+    // const length = this.props.val.length;
+    let getLastId = 99;
+    // if (length !== 0) {
+    //   getLastId = this.props.val[length - 1].taskid + 1;
+    // }
 
     const { taskname, taskdesc, taskdone } = this.state;
 
@@ -24,15 +29,15 @@ class Create extends Component {
       taskdone
     };
 
-    Axios.post("/task/insert", insertData)
-      .then(res => {
-        console.log("Insert Status", res.status);
+    this.props.addNewTaskToRedux(insertData);
+    // Axios.post("/task/insert", insertData)
+    //   .then(res => {
+    //     console.log("Insert Status", res.status);
 
-        this.props.onInsert(insertData);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
 
     this.setState({
       taskname: "",
@@ -48,7 +53,7 @@ class Create extends Component {
           <div className="col-md-12 mt-4 mb-5">
             <h3 className="mb-5 text-center">Create New Task</h3>
             <div className="col-md-6 mx-auto box">
-              <form>
+              <form onSubmit={e => e.preventDefault()}>
                 <div className="form-group">
                   <label htmlFor="task">
                     <strong>Task</strong>
@@ -101,8 +106,7 @@ class Create extends Component {
                 </div>
 
                 <button
-                  onClick={e => {
-                    e.preventDefault();
+                  onClick={() => {
                     this.insertData();
                   }}
                   className="btn btn-success mt-3"
@@ -118,4 +122,8 @@ class Create extends Component {
   }
 }
 
-export default Create;
+const mapDispatchToProps = (dispatch) => ({
+  addNewTaskToRedux: (task) => dispatch(addNewTask(task))
+})
+
+export default connect(null, mapDispatchToProps)(Create);

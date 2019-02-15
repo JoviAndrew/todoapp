@@ -2,34 +2,35 @@ import React, { Component } from "react";
 import Axios from "axios";
 import styled from "styled-components";
 
-class Update extends Component {
-  state = {
-    taskid: "",
-    taskname: "",
-    taskdesc: "",
-    taskdone: ""
-  };
+export default class Update extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      taskid: props.currentData.taskid || '',
+      taskname: props.currentData.taskname || '',
+      taskdesc: props.currentData.taskdesc || '',
+      taskdone: props.currentData.taskdone || ''
+    };
+  }
 
-  updateData = task => {
+  updateData = (task) => {
     console.log(task);
 
-    Axios.put(`/task/update/${task.taskid}`, {
-      taskname: task.taskname,
-      taskdesc: task.taskdesc,
-      taskdone: task.taskdone
-    })
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    // Axios.put(`/task/update/${task.taskid}`, {
+    //   taskname: task.taskname,
+    //   taskdesc: task.taskdesc,
+    //   taskdone: task.taskdone
+    // })
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   };
 
   render() {
-    const { taskid, taskname, taskdesc, taskdone } = this.props.currentData;
-    console.log(this.props.currentData);
-
+    const { taskid, taskname, taskdesc, taskdone } = this.state
     return (
       <ModalContainer>
         <div className="container">
@@ -37,7 +38,7 @@ class Update extends Component {
             <div className="col-md-12 mt-4 mb-5">
               <div id="modal" className="col-md-6 mx-auto box">
                 <h3 className="mb-5 text-center">Update a Task</h3>
-                <form>
+                <form onSubmit={e => e.preventDefault()}>
                   <div className="form-group">
                     <label htmlFor="task">
                       <strong>Task ID</strong>
@@ -59,11 +60,7 @@ class Update extends Component {
                       type="text"
                       className="form-control"
                       placeholder="Playing, gym, coding.."
-                      onChange={e =>
-                        this.setState({
-                          taskid,
-                          taskname: e.target.value
-                        })
+                      onChange={(e) =>  this.setState({taskname: e.target.value})
                       }
                     />
                   </div>
@@ -103,20 +100,17 @@ class Update extends Component {
                   </div>
 
                   <button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.updateData(this.state);
-                      this.props.modalClose(false);
-                    }}
+                    onClick={() => this.updateData(this.state)
+                      // e.preventDefault();
+                      // 
+                      // this.props.modal(false);
+                    }
                     className="btn btn-success mt-3"
                   >
                     Update Task
                   </button>
                   <button
-                    onClick={e => {
-                      e.preventDefault();
-                      this.props.modal(false);
-                    }}
+                    onClick={() => this.props.modal(false)}
                     className="btn btn-secondary mt-3 ml-4"
                   >
                     Close
@@ -146,5 +140,3 @@ const ModalContainer = styled.div`
     background: white;
   }
 `;
-
-export default Update;

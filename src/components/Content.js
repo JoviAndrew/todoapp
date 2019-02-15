@@ -4,15 +4,23 @@ import Title from "./Title";
 import Axios from "axios";
 import Create from "./Create";
 import Update from "./Update";
+import { connect } from 'react-redux'
 
 class Content extends Component {
-  state = {
-    task: [],
-    isModal: false
-  };
+  constructor () {
+    super()
+    this.state = {
+      tasks: [],
+      isModal: false
+    }
+  }
 
-  componentDidMount() {
-    this.retrieveData();
+  static getDerivedStateFromProps (nextProps, prevState) {
+    if (prevState.tasks !== nextProps.task.task) {
+      return {
+        tasks: nextProps.task
+      }
+    }
   }
 
   setData = insertVal => {
@@ -21,17 +29,17 @@ class Content extends Component {
     });
   };
 
-  retrieveData = () => {
-    Axios.get("/task")
-      .then(res => {
-        this.setState({
-          task: res.data.taskdata
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  // retrieveData = () => {
+  //   Axios.get("/task")
+  //     .then(res => {
+  //       this.setState({
+  //         task: res.data.taskdata
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
 
   handleDelete = taskid => {
     const tempState = this.state.task.filter(function(singleTask) {
@@ -42,16 +50,18 @@ class Content extends Component {
       task: tempState
     });
 
-    Axios.delete(`/task/delete/${taskid}`)
-      .then(res => {
-        console.log("delete success");
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    // Axios.delete(`/task/delete/${taskid}`)
+    //   .then(res => {
+    //     console.log("delete success");
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   };
 
   render() {
+    const { globalTask } = this.state.tasks
+    console.log('this state: ', globalTask)
     return (
       <div className="container">
         <Title name="Task List" />
@@ -59,7 +69,7 @@ class Content extends Component {
           <Create val={this.state.task} onInsert={this.setData} />
           <Task
             onDelete={this.handleDelete}
-            value={this.state.task}
+            value={globalTask}
             modal={this.handleOpen}
           />
         </div>
@@ -68,4 +78,8 @@ class Content extends Component {
   }
 }
 
-export default Content;
+const mapStateToProps = (state) => ({
+  task: state.task
+})
+
+export default connect(mapStateToProps)(Content)
